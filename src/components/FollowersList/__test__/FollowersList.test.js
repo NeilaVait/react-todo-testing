@@ -14,7 +14,8 @@ describe('async testing', () => {
   it('renders follower on the screen', async () => {
     render(<MockFList />);
     // screen.debug();
-    const contactElArr = await screen.findAllByTestId('contact-el');
+    const contactElArr = await screen.findAllByTestId(/contact-el/);
     expect(contactElArr).not.toHaveLength(0);
+    expect(contactElArr).toHaveLength(5);
   });
 });
