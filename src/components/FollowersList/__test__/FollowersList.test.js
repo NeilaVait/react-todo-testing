@@ -1,4 +1,8 @@
-import { screen, render } from '@testing-library/react';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+import { render, waitFor, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+
 import { BrowserRouter } from 'react-router-dom';
 import FollowersList from '../FollowersList';
 
@@ -9,6 +13,33 @@ const MockFList = () => {
     </BrowserRouter>
   );
 };
+
+const mockResponse = {
+  results: [
+    {
+      name: {
+        first: 'James',
+        last: 'Bond',
+      },
+      login: {
+        username: 'orangetiger284',
+      },
+      picture: {
+        large: 'https://randomuser.me/api/portraits/women/12.jpg',
+      },
+    },
+  ],
+};
+
+const server = setupServer(
+  rest.get('https://randomuser.me/api/', (req, res, ctx) => {
+    return res(ctx.json(mockResponse));
+  })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 describe('Async testing', () => {
   it('Renders Folowers on the screen', async () => {
