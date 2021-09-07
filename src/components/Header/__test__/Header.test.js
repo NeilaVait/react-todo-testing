@@ -20,11 +20,11 @@ describe('header tests', () => {
   });
 
   // pagal nematoma title
-  it('should have a title "second"', () => {
-    render(<Header title="My header" />);
-    const otherHeading = screen.getByTitle('second');
-    expect(otherHeading).toBeInTheDocument();
-  });
+  // it('should have a title "second"', () => {
+  //   render(<Header title="My header" />);
+  //   const otherHeading = screen.getByTitle('second');
+  //   expect(otherHeading).toBeInTheDocument();
+  // });
 
   // pagal test id = nerekomenduojama overusint
   it('should render main title with id', () => {

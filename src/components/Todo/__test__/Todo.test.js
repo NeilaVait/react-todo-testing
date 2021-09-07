@@ -1,7 +1,6 @@
-import { screen, render, fireEvent } from '@testing-library/react';
-import Todo from './../Todo';
-import AddInput from './../../AddInput/AddInput';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import Todo from '../Todo';
 
 const MockTodo = () => {
   return (
@@ -11,51 +10,67 @@ const MockTodo = () => {
   );
 };
 
-it('should add todo to list', () => {
-  render(<MockTodo />);
+function addToTodo(todoArr) {
+  // ivedam reiksme, paspaudziam mygtuka
   const inputEl = screen.getByPlaceholderText(/Add a new task/);
-  fireEvent.change(inputEl, { target: { value: 'Do sports on Sunday' } });
+  // gauti mygtuka
   const btnEl = screen.getByRole('button', { name: /add/i });
-  fireEvent.click(btnEl);
+  // cikle
+  todoArr.forEach((todo) => {
+    fireEvent.change(inputEl, { target: { value: todo } });
+    // paspaudziam mygtuka
+    fireEvent.click(btnEl);
+  });
+}
+
+it('Should add single todo to a list', () => {
+  render(<MockTodo />);
+  addToTodo(['Do sports on Sunday']);
   const todoAddedEl = screen.getByText('Do sports on Sunday');
-  // assert
+  // expektinam rasti ivesta reiksme todo liste
+  // Assert
   expect(todoAddedEl).toBeInTheDocument();
   expect(todoAddedEl).toHaveClass('todo-item');
 });
 
-it('should add multiple todos to list', () => {
+it('Should add multiple todos to a list', () => {
+  // taip pat kaip auksciau tik
   render(<MockTodo />);
-  const inputEl = screen.getByPlaceholderText(/Add a new task/);
-  const btnEl = screen.getByRole('button', { name: /add/i });
-  fireEvent.change(inputEl, { target: { value: 'Do sports on Sunday' } });
-  fireEvent.click(btnEl);
-  fireEvent.change(inputEl, { target: { value: 'Do nothing' } });
-  fireEvent.click(btnEl);
-  const todoAddedEl = screen.getByTestId(0);
-  const todoAddedEl1 = screen.getByTestId(1);
-  expect(todoAddedEl).toBeInTheDocument();
-  expect(todoAddedEl).toHaveClass('todo-item');
-  expect(todoAddedEl1).toBeInTheDocument();
-  expect(todoAddedEl1).toHaveClass('todo-item');
+  // ivedam ir paspaudziam 3 k
+  // vietoj rankinio ivedimo, pasidaryti funkcija kuri gauna masyva
+  // ir ivedas masyvo el reiksme ir paspaudzia mygtuka
+  addToTodo(['one', 'two', 'three']);
+
+  const todoAddedArr = screen.getAllByTestId('todo-item');
+  // expektinam rasti ivesta reiksme todo liste
+  // Assert
+  expect(todoAddedArr).toHaveLength(3);
 });
 
-it('new todo should not have completed class', () => {
+it('Task should not have completed class when added to list', () => {
+  // irasom reiksme
+  //mygtuko paspaudimo
+  //pridejomo i sarasa
+  // pasiziurim i klase
   render(<MockTodo />);
-  const inputEl = screen.getByPlaceholderText(/Add a new task/);
-  const btnEl = screen.getByRole('button', { name: /add/i });
-  fireEvent.change(inputEl, { target: { value: 'Do sports on Sunday' } });
-  fireEvent.click(btnEl);
+  addToTodo(['Do sports on Sunday']);
   const todoAddedEl = screen.getByText('Do sports on Sunday');
+  // expektinam rasti ivesta reiksme todo liste
+  // Assert
   expect(todoAddedEl).not.toHaveClass('todo-item-active');
 });
 
-it('added todo should contain completed class', () => {
+test('Task should be gray when clicked(add a class)', () => {
+  // irasom reiksme
+  //mygtuko paspaudimo
+  //pridejomo i sarasa
+  // paspaudziam
+  // pasiziurim ar turi klase todo-item-active
   render(<MockTodo />);
-  const inputEl = screen.getByPlaceholderText(/Add a new task/);
-  fireEvent.change(inputEl, { target: { value: 'Do sports on Sunday' } });
-  const btnEl = screen.getByRole('button', { name: /add/i });
-  fireEvent.click(btnEl);
+  addToTodo(['Do sports on Sunday']);
   const todoAddedEl = screen.getByText('Do sports on Sunday');
+  // expektinam rasti ivesta reiksme todo liste
+  // Assert
   fireEvent.click(todoAddedEl);
   expect(todoAddedEl).toHaveClass('todo-item-active');
 });
